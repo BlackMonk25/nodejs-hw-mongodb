@@ -1,6 +1,5 @@
 // import express from 'express';
 // import contactsRouter from './routes/contactsRouter.js';
-
 // export const setupServer = () => {
 //   const app = express();
 
@@ -24,10 +23,8 @@ import contactsRouter from './routes/contactsRouter.js';
 
 export const setupServer = () => {
   const app = express();
-
   app.use(express.json());
-
-  app.use(contactsRouter);
+  app.use('/contacts', contactsRouter);
 
   app.use((req, res) => {
     res.status(404).json({ status: 404, message: 'Not found' });
@@ -38,7 +35,6 @@ export const setupServer = () => {
     console.log(`🚀 Server is running on port ${PORT}`);
   });
 };
-
 
 
 

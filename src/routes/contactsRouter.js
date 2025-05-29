@@ -1,3 +1,4 @@
+
 // import express from 'express';
 // import { handleGetAllContacts, handleGetContactById } from '../controllers/contactsController.js';
 
@@ -10,14 +11,16 @@
 
 
 import express from 'express';
-import { handleGetAllContacts, handleGetContactById } from '../controllers/contactsController.js';
+import {
+  handleGetAllContacts,
+  handleGetContactById,
+} from '../controllers/contactsController.js';
 
 const router = express.Router();
 
-router.get('/contacts', handleGetAllContacts);
-router.get('/contacts/:contactId', handleGetContactById);
+router.get('/', handleGetAllContacts);
+router.get('/:contactId', handleGetContactById);
 
 export default router;
-
 
 
