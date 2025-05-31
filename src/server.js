@@ -1,61 +1,32 @@
 import express from 'express';
-import pino from 'pino-http';
 import cors from 'cors';
+import pino from 'pino';
+import pinoHttp from 'pino-http';
+import {
+  getContactsController,
+  getContactByIdController,
+} from './controllers/contactsController.js';
 
-import { getEnvVar } from './utils/getEnvVar.js';
-import { getAllStudents, getStudentById } from './services/students.js';
-
-const PORT = Number(getEnvVar('PORT', '3000'));
-
-export const startServer = () => {
+export const setupServer = () => {
   const app = express();
 
-  app.use(express.json());
   app.use(cors());
 
-  app.use(
-    pino({
-      transport: {
-        target: 'pino-pretty',
-      },
-    }),
-  );
+  const logger = pino();
+  app.use(pinoHttp({ logger }));
 
-  app.get('/students', async (req, res) => {
-    const students = await getAllStudents();
-    res.status(200).json({
-      data: students,
-    });
-  });
+  // GET /contacts - всі контакти
+  app.get('/contacts', getContactsController);
 
-  app.get('/students/:studentId', async (req, res) => {
-    const { studentId } = req.params;
-    const student = await getStudentById(studentId);
+  // GET /contacts/:contactId - контакт за id
+  app.get('/contacts/:contactId', getContactByIdController);
 
-    if (!student) {
-      res.status(404).json({ message: 'Student not found' });
-      return;
-    }
-
-    res.status(200).json({ data: student });
-  });
-
-  app.get('/', (req, res) => {
-    res.json({ message: 'Hello World!' });
-  });
-
-  app.use('*', (req, res) => {
+  app.use((req, res) => {
     res.status(404).json({ message: 'Not found' });
   });
 
-  app.use((err, req, res, next) => {
-    res.status(500).json({
-      message: 'Something went wrong',
-      error: err.message,
-    });
-  });
-
-  app.listen(PORT, () => {
-    console.log(`✅ Server is running on port ${PORT}`);
-  });
+  return app;
 };
+
+
+
