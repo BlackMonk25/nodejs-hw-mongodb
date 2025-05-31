@@ -1,45 +1,61 @@
-// import express from 'express';
-// import contactsRouter from './routes/contactsRouter.js';
-// export const setupServer = () => {
-//   const app = express();
-
-//   app.use(express.json());
-
-//   app.use(contactsRouter);
-
-//   app.use((req, res) => {
-//     res.status(404).json({ status: 404, message: 'Not found' });
-//   });
-
-//   const PORT = process.env.PORT || 3000;
-//   app.listen(PORT, () => {
-//     console.log(`🚀 Server is running on port ${PORT}`);
-//   });
-// };
-
-
 import express from 'express';
-import contactsRouter from './routes/contactsRouter.js';
+import pino from 'pino-http';
+import cors from 'cors';
 
-export const setupServer = () => {
+import { getEnvVar } from './utils/getEnvVar.js';
+import { getAllStudents, getStudentById } from './services/students.js';
+
+const PORT = Number(getEnvVar('PORT', '3000'));
+
+export const startServer = () => {
   const app = express();
-  app.use(express.json());
-  app.use('/contacts', contactsRouter);
 
-  app.use((req, res) => {
-    res.status(404).json({ status: 404, message: 'Not found' });
+  app.use(express.json());
+  app.use(cors());
+
+  app.use(
+    pino({
+      transport: {
+        target: 'pino-pretty',
+      },
+    }),
+  );
+
+  app.get('/students', async (req, res) => {
+    const students = await getAllStudents();
+    res.status(200).json({
+      data: students,
+    });
   });
 
-  const PORT = process.env.PORT || 3000;
+  app.get('/students/:studentId', async (req, res) => {
+    const { studentId } = req.params;
+    const student = await getStudentById(studentId);
+
+    if (!student) {
+      res.status(404).json({ message: 'Student not found' });
+      return;
+    }
+
+    res.status(200).json({ data: student });
+  });
+
+  app.get('/', (req, res) => {
+    res.json({ message: 'Hello World!' });
+  });
+
+  app.use('*', (req, res) => {
+    res.status(404).json({ message: 'Not found' });
+  });
+
+  app.use((err, req, res, next) => {
+    res.status(500).json({
+      message: 'Something went wrong',
+      error: err.message,
+    });
+  });
+
   app.listen(PORT, () => {
-    console.log(`🚀 Server is running on port ${PORT}`);
+    console.log(`✅ Server is running on port ${PORT}`);
   });
 };
-
-
-
-
-
-
-
-
