@@ -1,30 +1,19 @@
 import mongoose from 'mongoose';
+import { getEnvVar } from '../utils/getEnvVar.js';
 
 export const initMongoConnection = async () => {
-  const {
-    MONGODB_USER,
-    MONGODB_PASSWORD,
-    MONGODB_URL,
-    MONGODB_DB,
-  } = process.env;
-
-  if (!MONGODB_USER || !MONGODB_PASSWORD || !MONGODB_URL || !MONGODB_DB) {
-    console.error('Missing one or more MongoDB environment variables!');
-    process.exit(1);
-  }
-
-  // Формуємо URI для підключення
-  // Приклад URI: mongodb+srv://user:password@cluster0.mongodb.net/dbname?retryWrites=true&w=majority
-  const mongoUri = `mongodb+srv://${encodeURIComponent(MONGODB_USER)}:${encodeURIComponent(
-    MONGODB_PASSWORD,
-  )}@${MONGODB_URL}/${MONGODB_DB}?retryWrites=true&w=majority`;
-
+  const user = getEnvVar('MONGODB_USER');
+  const pwd = getEnvVar('MONGODB_PASSWORD');
+  const url = getEnvVar('MONGODB_URL');
+  const db = getEnvVar('MONGODB_DB');
   try {
-    await mongoose.connect(mongoUri);
+    await mongoose.connect(
+      `mongodb+srv://${user}:${pwd}@${url}/${db}?retryWrites=true&w=majority&appName=Cluster0`,
+    );
+
     console.log('Mongo connection successfully established!');
   } catch (error) {
-    console.error('Mongo connection error:', error.message);
-    process.exit(1);
+    console.log('Error while setting up mongo connection', error);
   }
 };
 
