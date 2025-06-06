@@ -7,7 +7,9 @@ import { getEnvVar } from './utils/getEnvVar.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import contactRoute from './routers/contacts.js';
+
 const PORT = getEnvVar('PORT', '3000');
+
 export const setupServer = () => {
   const app = express();
   app.use(express.json());
@@ -20,7 +22,9 @@ export const setupServer = () => {
       },
     }),
   );
-  app.use(contactRoute);
+
+  app.use('/contacts', contactRoute); 
+
   app.use(notFoundHandler);
   app.use(errorHandler);
 
@@ -28,6 +32,7 @@ export const setupServer = () => {
     console.log(`Server is running on port ${PORT}`);
   });
 };
+
 
 
 
