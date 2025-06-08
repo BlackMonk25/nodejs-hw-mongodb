@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // 1. Імпортуємо бібліотеки
 import express from 'express';       // Express — фреймворк для створення сервера
 import cors from 'cors';             // CORS — дозволяє іншим сайтам надсилати запити
@@ -5,8 +6,34 @@ import pinoHttp from 'pino-http';    // Pino — виводить лог кож�
 import contactsRoutes from './routes/contactsRoutes.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
+=======
+import express from 'express';
+import cors from 'cors';
+import pino from 'pino-http';
 
+import { getEnvVar } from './utils/getEnvVar.js';
 
+import { notFoundHandler } from './middlewares/notFoundHandler.js';
+import { errorHandler } from './middlewares/errorHandler.js';
+import contactRoute from './routers/contacts.js';
+
+const PORT = getEnvVar('PORT', '3000');
+
+export const setupServer = () => {
+  const app = express();
+  app.use(express.json());
+  app.use(cors());
+>>>>>>> bc491624e7d702211853fd7d9a0859acb17e456f
+
+  app.use(
+    pino({
+      transport: {
+        target: 'pino-pretty',
+      },
+    }),
+  );
+
+<<<<<<< HEAD
 // 2. Створюємо функцію setupServer
 export const setupServer = () => {
   const app = express(); // створення екземпляру сервера
@@ -26,6 +53,12 @@ app.use(errorHandler);     // ловить все інше
 
   // 5. Отримуємо порт зі змінної оточення або 3000
   const PORT = process.env.PORT || 3000;
+=======
+  app.use('/contacts', contactRoute); 
+
+  app.use(notFoundHandler);
+  app.use(errorHandler);
+>>>>>>> bc491624e7d702211853fd7d9a0859acb17e456f
 
   // 6. Запускаємо сервер
   app.listen(PORT, () => {
@@ -33,3 +66,10 @@ app.use(errorHandler);     // ловить все інше
   });
 };
 
+<<<<<<< HEAD
+=======
+
+
+
+
+>>>>>>> bc491624e7d702211853fd7d9a0859acb17e456f

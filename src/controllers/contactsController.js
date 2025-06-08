@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 import createError from 'http-errors'; // формуємо помилки
 import { fetchAllContacts, fetchContactById, createContact, updateContact, deleteContact } from '../services/contacts.js';
 
@@ -65,10 +66,23 @@ export const deleteContactController = async (req, res) => {
   const { contactId } = req.params; 
 
   const deletedContact = await deleteContact(contactId);
+=======
+import createError from 'http-errors';
+import { deleteContact } from '../services/contacts.js';
+
+export const deleteContactCtrl = async (req, res) => {
+  const { id } = req.params;
+  const deletedContact = await deleteContact(id);
+>>>>>>> bc491624e7d702211853fd7d9a0859acb17e456f
 
   if (!deletedContact) {
     throw createError(404, 'Contact not found');
   }
 
+<<<<<<< HEAD
   res.status(204).send(); // НІХУЯ НЕМАЄ
 };
+=======
+  res.status(204).end();  
+};
+>>>>>>> bc491624e7d702211853fd7d9a0859acb17e456f
