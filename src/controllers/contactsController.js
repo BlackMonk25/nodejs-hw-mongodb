@@ -1,6 +1,6 @@
+// src/controllers/contactsController.js
 
-
-import { fetchAllContacts, fetchContactById } from '../services/contacts.js'; 
+import { fetchAllContacts, fetchContactById } from '../services/contacts.js'; // Імпортуємо функцію, яка читає з БД
 
 export const getAllContacts = async (req, res) => {
   try {
@@ -22,8 +22,8 @@ export const getAllContacts = async (req, res) => {
 
 export const getContactById = async (req, res) => {
   try {
-    const { contactId } = req.params; 
-    const contact = await fetchContactById(contactId); 
+    const { contactId } = req.params; // отримаємо contactId з URL
+    const contact = await fetchContactById(contactId); // шукаємо в базі
 
     if (!contact) {
       return res.status(404).json({ message: 'Contact not found' });

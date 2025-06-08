@@ -1,4 +1,4 @@
-
+// src/db/initMongoConnection.js
 import mongoose from 'mongoose';
 
 export async function initMongoConnection() {
@@ -11,8 +11,9 @@ export async function initMongoConnection() {
     console.log('✅ Mongo connection successfully established!');
   } catch (error) {
     console.error('❌ Mongo connection failed:', error.message);
-    process.exit(1); 
+    process.exit(1); // Завершує програму, якщо з’єднання не встановлено
   }
 }
+
 
 
