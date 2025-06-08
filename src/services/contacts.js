@@ -1,14 +1,14 @@
-// src/index.js
-import dotenv from 'dotenv';
-dotenv.config(); //зчитує .env файл  і додає всі змінні, що в ньому, до process.env
+// src/services/contacts.js
 
-import { initMongoConnection } from './db/initMongoConnection.js';
-import { setupServer } from './server.js';
+import { Contact } from '../models/contactModel.js';
 
-async function bootstrap() {
-  await initMongoConnection();
-  setupServer(); 
-}
+// Повертає всі документи
+export const fetchAllContacts = async () => {
+  return await Contact.find();
+};
 
-bootstrap();
+// Повертає об'єкт контакту по ID або null
+export const fetchContactById = async (id) => {
+  return await Contact.findById(id);
+};
 
