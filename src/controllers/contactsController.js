@@ -1,7 +1,11 @@
-
-<<<<<<< HEAD
-import createError from 'http-errors'; // формуємо помилки
-import { fetchAllContacts, fetchContactById, createContact, updateContact, deleteContact } from '../services/contacts.js';
+import createError from 'http-errors';
+import {
+  fetchAllContacts,
+  fetchContactById,
+  createContact,
+  updateContact,
+  deleteContact,
+} from '../services/contacts.js';
 
 export const getAllContacts = async (req, res) => {
   const contacts = await fetchAllContacts();
@@ -18,7 +22,6 @@ export const getContactById = async (req, res) => {
   const contact = await fetchContactById(contactId);
 
   if (!contact) {
-    // якщо помилок немає — кидаємо помилку, яка піде в errorHandler
     throw createError(404, 'Contact not found');
   }
 
@@ -28,61 +31,47 @@ export const getContactById = async (req, res) => {
     data: contact,
   });
 };
+
 export const createContactController = async (req, res) => {
-  const contact = await createContact(req.body); 
+  const contact = await createContact(req.body);
 
   res.status(201).json({
     status: 201,
-    message: `Successfully created a contact!`,
+    message: 'Successfully created a contact!',
     data: contact,
   });
 };
 
-
-export const updateContactController = async (req, res, next) => {
+export const updateContactController = async (req, res) => {
   const { contactId } = req.params;
 
-  //  тут робиться перевірка: чи щось передано для оновлення, чи ні
   if (Object.keys(req.body).length === 0) {
     throw createError(400, 'No data provided for update');
   }
 
-  // робимо оновлення сраного контенту
   const updatedContact = await updateContact(contactId, req.body);
 
-  //  у випадку,коли ніхуя не знайдено
   if (!updatedContact) {
     throw createError(404, 'Contact not found');
   }
 
-  //  відповідь у разі успіху
   res.status(200).json({
     status: 200,
     message: 'Successfully patched a contact!',
     data: updatedContact,
   });
 };
+
 export const deleteContactController = async (req, res) => {
-  const { contactId } = req.params; 
+  const { contactId } = req.params;
 
   const deletedContact = await deleteContact(contactId);
-=======
-import createError from 'http-errors';
-import { deleteContact } from '../services/contacts.js';
-
-export const deleteContactCtrl = async (req, res) => {
-  const { id } = req.params;
-  const deletedContact = await deleteContact(id);
->>>>>>> bc491624e7d702211853fd7d9a0859acb17e456f
 
   if (!deletedContact) {
     throw createError(404, 'Contact not found');
   }
 
-<<<<<<< HEAD
-  res.status(204).send(); // НІХУЯ НЕМАЄ
+  res.status(204).send(); // успішне видалення, без тіла відповіді
 };
-=======
-  res.status(204).end();  
-};
->>>>>>> bc491624e7d702211853fd7d9a0859acb17e456f
+
+

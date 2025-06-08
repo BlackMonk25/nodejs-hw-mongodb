@@ -1,6 +1,5 @@
-
 import dotenv from 'dotenv';
-dotenv.config(); //зчитує .env файл  і додає всі змінні, що в ньому, до process.env
+dotenv.config(); // зчитує .env файл і додає всі змінні, що в ньому, до process.env
 
 import { initMongoConnection } from './db/initMongoConnection.js';
 import { setupServer } from './server.js';
@@ -19,7 +18,6 @@ bootstrap();
 
 
 
-<<<<<<< HEAD
 
-=======
->>>>>>> bc491624e7d702211853fd7d9a0859acb17e456f
+
+
