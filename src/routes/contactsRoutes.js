@@ -1,7 +1,7 @@
 import express from 'express';
 import { getAllContacts, getContactById, createContactController, updateContactController, deleteContactController } from '../controllers/contactsController.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
-import { isValidID } from '../middlewares/isValidID.js';
+import { isValidID } from '../middlewares/isValidId.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import {
     createContactSchema,
