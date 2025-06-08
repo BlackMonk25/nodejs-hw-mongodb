@@ -1,12 +1,13 @@
-import { Contacts } from '../models/contact.js';
 
-export const getAllContacts = async () => {
-  const contacts = await Contacts.find();
-  console.log(contacts);
+import dotenv from 'dotenv';
+dotenv.config(); 
 
-  return contacts;
-};
-export const getContactById = async (id) => {
-  const contact = await Contacts.findById(id);
-  return contact;
-};
+import { initMongoConnection } from './db/initMongoConnection.js';
+import { setupServer } from './server.js';
+
+async function bootstrap() {
+  await initMongoConnection();
+  setupServer(); 
+}
+
+bootstrap();

@@ -1,72 +1,33 @@
-import express from 'express';
-import cors from 'cors';
-import pino from 'pino-http';
-import { getEnvVar } from './utils/getEnvVar.js';
-import { getAllContacts, getContactById } from './services/contacts.js';
+// 1. Імпортуємо бібліотеки
+import express from 'express';       // Express — фреймворк для створення сервера
+import cors from 'cors';             // CORS — дозволяє іншим сайтам надсилати запити
+import pinoHttp from 'pino-http';    // Pino — виводить лог кожного запиту в консоль
+import contactsRoutes from './routes/contactsRoutes.js';
 
-const PORT = getEnvVar('PORT', '3000');
 
+// 2. Створюємо функцію setupServer
 export const setupServer = () => {
-  const app = express();
-  app.use(cors());
-  app.use(express.json());
+  const app = express(); // створення екземпляру сервера
 
-  app.use(
-    pino({
-      transport: {
-        target: 'pino-pretty',
-      },
-    })
-  );
+  // 3. Підключення middleware
+  app.use(cors());        // Дозволяє запити з будь-якого джерела
+  app.use(pinoHttp());    // Лог кожного запиту
+  app.use(express.json()); //парсінг тіла запиту
+  
+  app.use('/contacts', contactsRoutes);//маршрути контактів
 
-  app.get('/contacts', async (req, res) => {
-    try {
-      const contacts = await getAllContacts();
-      res.status(200).json({
-        status: 200,
-        message: 'Successfully found contacts!',
-        data: contacts,
-      });
-    } catch (error) {
-      res.status(500).json({
-        status: 500,
-        message: 'Internal server error',
-      });
-    }
-  });
-
-  app.get('/contacts/:id', async (req, res) => {
-    try {
-      const { id } = req.params;
-      const contact = await getContactById(id);
-      if (!contact) {
-        return res.status(404).json({
-          status: 404,
-          message: 'Contact not found',
-        });
-      }
-      res.status(200).json({
-        status: 200,
-        message: `Successfully found contact with id ${id}!`,
-        data: contact,
-      });
-    } catch (error) {
-      res.status(500).json({
-        status: 500,
-        message: 'Internal server error',
-      });
-    }
-  });
+  //4. Обробник помилок
 
   app.use((req, res) => {
-    res.status(404).json({
-      status: 404,
-      message: 'Route not found',
-    });
+    res.status(404).json({ message: 'Not found' });  // Якщо немає такого шляху — повертаємо 404
   });
 
+  // 5. Отримуємо порт зі змінної оточення або 3000
+  const PORT = process.env.PORT || 3000;
+
+  // 6. Запускаємо сервер
   app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`✅ Server is running on port ${PORT}`);
   });
 };
 
