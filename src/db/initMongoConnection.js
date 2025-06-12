@@ -1,19 +1,21 @@
 import mongoose from 'mongoose';
+import { getEnvVar } from '../utils/getEnvVar.js';
 
-export async function initMongoConnection() {
-  const { MONGODB_USER, MONGODB_PASSWORD, MONGODB_URL, MONGODB_DB } = process.env;
-
-  const connectionString = `mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_URL}/${MONGODB_DB}?retryWrites=true&w=majority&appName=Cluster0`;
-
+export const initMongoConnection = async () => {
   try {
-    await mongoose.connect(connectionString, {
-      serverSelectionTimeoutMS: 30000, // необов'язково, але можна для стабільності
-    });
+    const user = getEnvVar('MONGODB_USER');
+    const pwd = getEnvVar('MONGODB_PASSWORD');
+    const url = getEnvVar('MONGODB_URL');
+    const db = getEnvVar('MONGODB_DB');
 
-    console.log('✅ Mongo connection successfully established!');
+    await mongoose.connect(
+      `mongodb+srv://${user}:${pwd}@${url}/${db}?retryWrites=true&w=majority&appName=Cluster0`,
+    );
+
+    console.log('Mongo connection successfully established!');
   } catch (error) {
-    console.error('❌ Mongo connection failed:', error.message);
-    process.exit(1); // Завершуємо процес, якщо зʼєднання немає
+    console.log('Error while setting up mongo connection', error);
+    throw error;
   }
-}
+};
 
