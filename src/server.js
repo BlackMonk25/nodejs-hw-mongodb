@@ -1,32 +1,80 @@
-// 1. Імпортуємо бібліотеки
-import express from 'express';       // Express — фреймворк для створення сервера
-import cors from 'cors';             // CORS — дозволяє іншим сайтам надсилати запити
-import pinoHttp from 'pino-http';    // Pino — виводить лог кожного запиту в консоль
-import contactsRoutes from './routes/contactsRoutes.js';
+import express from 'express';
+import { getEnvVar } from './utils/getEnvVar.js';
+import cors from 'cors';
+import pino from 'pino-http';
+import { getAllContacts, getContactById } from './services/contacts.js';
 
+const PORT = Number(getEnvVar('PORT', '3000'));
 
-// 2. Створюємо функцію setupServer
-export const setupServer = () => {
-  const app = express(); // створення екземпляру сервера
+export const setupServer = async () => {
+  const app = express();
 
-  // 3. Підключення middleware
-  app.use(cors());        // Дозволяє запити з будь-якого джерела
-  app.use(pinoHttp());    // Лог кожного запиту
-  app.use(express.json()); //парсінг тіла запиту
-  
-  app.use('/contacts', contactsRoutes);//маршрути контактів
+  app.use(express.json());
+  app.use(cors());
 
-  //4. Обробник помилок
+  app.use(
+    pino({
+      transport: {
+        target: 'pino-pretty',
+      },
+    }),
+  );
+
+  app.get('/', (req, res) => {
+    res.send('Helo World!');
+  });
+
+  app.get('/contacts', async (req, res) => {
+    const contacts = await getAllContacts();
+
+    res.status(200).json({
+      status: 200,
+      message: 'Successfully found contacts!',
+      data: contacts,
+    });
+  });
+
+  app.get('/contacts/:contactId', async (req, res) => {
+    const { contactId } = req.params;
+    const contact = await getContactById(contactId);
+
+    if (contact === null) {
+      return res.status(404).send({
+        status: 404,
+        message: 'Contact not found',
+      });
+    }
+
+    res.status(200).json({
+      status: 200,
+      message: `Successfully found contact with id ${contactId}!`,
+      data: contact,
+    });
+  });
 
   app.use((req, res) => {
-    res.status(404).json({ message: 'Not found' });  // Якщо немає такого шляху — повертаємо 404
+    res.status(404).json({
+      message: 'Not found',
+    });
   });
 
-  // 5. Отримуємо порт зі змінної оточення або 3000
-  const PORT = process.env.PORT || 3000;
-
-  // 6. Запускаємо сервер
-  app.listen(PORT, () => {
-    console.log(`✅ Server is running on port ${PORT}`);
+  app.use((err, req, res) => {
+    res.status(500).json({
+      message: 'Something went wrong',
+      error: err.message,
+    });
   });
+
+  try {
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  } catch (err) {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`❌ Port ${PORT} is already in use.`);
+    } else {
+      console.error('❌ Failed to start server:', err);
+    }
+    process.exit(1);
+  }
 };

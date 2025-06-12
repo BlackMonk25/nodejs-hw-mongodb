@@ -1,14 +1,12 @@
-// src/services/contacts.js
+import { ContactsCollection } from '../db/models/contact.js';
 
-import { Contact } from '../models/contactModel.js';
-
-// Повертає всі документи
-export const fetchAllContacts = async () => {
-  return await Contact.find();
+export const getAllContacts = async () => {
+  const contacts = await ContactsCollection.find();
+  return contacts;
 };
 
-// Повертає об'єкт контакту по ID або null
-export const fetchContactById = async (id) => {
-  return await Contact.findById(id);
+export const getContactById = async (studentId) => {
+  const contact = await ContactsCollection.findById(studentId);
+  return contact;
 };
 
