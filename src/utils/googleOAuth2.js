@@ -50,7 +50,7 @@ import { OAuth2Client } from 'google-auth-library';
 import { getEnvVar } from './getEnvVar.js';
 import createHttpError from 'http-errors';
 
-// Використовуємо redirectUri з ENV, а не з файлу
+
 const googleOAuthClient = new OAuth2Client({
   clientId: getEnvVar('GOOGLE_AUTH_CLIENT_ID'),
   clientSecret: getEnvVar('GOOGLE_AUTH_CLIENT_SECRET'),
